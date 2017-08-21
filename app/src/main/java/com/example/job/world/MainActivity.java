@@ -1,33 +1,22 @@
 package com.example.job.world;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.job.world.Adapter.CountryAdapter;
 import com.example.job.world.model.Country;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    private ListView lvJson;
     public static final String TAG = MainActivity.class.getSimpleName();
+    private ListView lvJson;
+    private RecyclerView recyclerView;
 
 
     @Override
@@ -65,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.setCollapsible(true);
         setSupportActionBar(toolbar);
 
-        lvJson = (ListView) findViewById(R.id.lv_json);
+
         // Create default options which will be used for every
         //  displayImage(...) call if no options will be passed to this method
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
@@ -76,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            .defaultDisplayImageOptions(defaultOptions)
            .build();
         ImageLoader.getInstance().init(config); // Do it on Application start
+
+        recyclerView = (RecyclerView) findViewById(R.id.rv_json);
+
     }
 
     @Override
@@ -179,8 +172,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "doInBackground: my json result"+countryList.toString());
 
                 //TODO create a recycle view
-                Myadapter myadapter = new Myadapter(getApplicationContext(),R.layout.country_item, results);
-                lvJson.setAdapter(myadapter);
+                CountryAdapter myadapter = new CountryAdapter(getApplicationContext(), results);
+                recyclerView.setAdapter(myadapter);
             } else {
                 Toast.makeText(getApplicationContext(),"null list",Toast.LENGTH_SHORT).show();
             }
@@ -188,78 +181,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-    public  class Myadapter extends ArrayAdapter{
 
-        List<Country> returnCountryList;
-        LayoutInflater inflater;
-        int resource;
-
-        public Myadapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<Country> objects) {
-            super(context, resource, objects);
-
-            this.resource = resource;
-            this.returnCountryList = objects;
-            inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            ImageView countryFlag;
-            TextView tvRank ;
-            TextView tvCountry_name ;
-            TextView tvPopulation ;
-            final ProgressBar progressBar;
-
-            if(convertView == null){
-                convertView = inflater.inflate(resource, null);
-
-            }
-                countryFlag = (ImageView) convertView.findViewById(R.id.country_image);
-                tvRank = (TextView) convertView.findViewById(R.id.rank);
-                tvCountry_name = (TextView) convertView.findViewById(R.id.country_name);
-                tvPopulation = (TextView) convertView.findViewById(R.id.population);
-                progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-
-
-            if (returnCountryList.get(position) != null) {
-
-
-                Log.d(TAG, "getView: ranks is :"+returnCountryList.get(position).getRank());
-                Log.d(TAG, "getView: name is :"+returnCountryList.get(position).getName());
-                Log.d(TAG, "getView: population is :"+returnCountryList.get(position).getPopulation());
-                //TODO set image up using Universal Image Loader Library
-                // countryFlag.setImageDrawable(returnCountryList.get(position).setFlag();
-                ImageLoader.getInstance().displayImage(returnCountryList.get(position).getFlag(), countryFlag, new ImageLoadingListener() {
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-                        progressBar.setVisibility(view.VISIBLE);
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                        progressBar.setVisibility(view.GONE);
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        progressBar.setVisibility(view.GONE);
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String imageUri, View view) {
-                        progressBar.setVisibility(view.GONE);
-                    }
-                }); // Default options will be used
-
-
-                tvRank.setText(String.valueOf(returnCountryList.get(position).getRank()));
-                tvCountry_name.setText(returnCountryList.get(position).getName());
-                tvPopulation.setText(returnCountryList.get(position).getPopulation());
-
-            }
-            return convertView;
-        }
-    }
 }
