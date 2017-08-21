@@ -12,10 +12,13 @@
     layout="@layout/toolbar"/>
 
 
-   <ListView
-       android:id="@+id/lv_json"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_json"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="LinearLayoutManager">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
