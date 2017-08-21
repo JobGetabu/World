@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">World</string>
+    <string name="Refresh">Refresh</string>
+    <string name="image_description">country flag images</string>
+    <string name="rank">Rank : </string>
+    <string name="rank_value">10</string>
+    <string name="country">Country</string>
+    <string name="population">Population : </string>
+    <string name="population_value">46,456,256</string>
+
+</resources>
